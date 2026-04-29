@@ -1,0 +1,18 @@
+{
+  "name": "lien-quan-tournament-registration",
+  "version": "1.0.0",
+  "description": "Website dang ky giai Lien Quan chay local voi Node.js, Express va MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.9.5",
+    "multer": "^2.0.2"
+  }
+}

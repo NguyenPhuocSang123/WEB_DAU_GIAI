@@ -1,0 +1,58 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1><%= team.name %></h1>
+    <p>Doi truong: <%= team.captainName %> - <%= team.captainEmail %></p>
+  </div>
+  <a class="btn btn-secondary" href="/admin/dashboard">Quay lai dashboard</a>
+</section>
+
+<section class="container detail-grid">
+  <div class="panel stack-md">
+    <div class="status-head">
+      <h2>Thong tin doi</h2>
+      <span class="status-badge <%= team.status %>"><%= team.status %></span>
+    </div>
+    <% if (team.logoPath) { %>
+      <img class="team-logo" src="<%= team.logoPath %>" alt="Logo <%= team.name %>" />
+    <% } %>
+    <p><strong>Khu vuc / truong / lop:</strong> <%= team.area %></p>
+    <p><strong>So dien thoai:</strong> <%= team.phone %></p>
+    <p><strong>UID doi truong:</strong> <%= team.captainUid %></p>
+    <p><strong>Ngay dang ky:</strong> <%= formatDate(team.registeredAt) %></p>
+    <% if (team.rejectionReason) { %>
+      <p><strong>Ly do tu choi:</strong> <%= team.rejectionReason %></p>
+    <% } %>
+  </div>
+
+  <div class="panel stack-md">
+    <h2>Danh sach thanh vien</h2>
+    <div class="member-list">
+      <% members.forEach((member) => { %>
+        <div class="member-line admin-member-line">
+          <strong><%= member.fullName %></strong>
+          <span>UID: <%= member.uid %></span>
+          <span>Rank: <%= member.rank || 'Chua cap nhat' %></span>
+          <span>Vai tro: <%= member.role || 'Chua cap nhat' %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="action-grid">
+      <form method="POST" action="/admin/teams/<%= team._id %>/approve">
+        <button class="btn btn-primary full-width" type="submit">Duyet doi</button>
+      </form>
+
+      <form method="POST" action="/admin/teams/<%= team._id %>/reject" class="stack-sm">
+        <label>
+          <span>Ly do tu choi</span>
+          <textarea name="reason" rows="4" placeholder="Nhap ly do tu choi"></textarea>
+        </label>
+        <button class="btn btn-danger full-width" type="submit">Tu choi doi</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials-footer') %>

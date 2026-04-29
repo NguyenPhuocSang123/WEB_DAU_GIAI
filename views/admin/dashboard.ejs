@@ -1,0 +1,52 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1>Admin dashboard</h1>
+    <p>Theo doi danh sach doi va xu ly phe duyet.</p>
+  </div>
+  <form method="POST" action="/admin/logout">
+    <button class="btn btn-secondary" type="submit">Dang xuat</button>
+  </form>
+</section>
+
+<section class="container summary-grid">
+  <div class="card stat-card"><span>Tong doi</span><strong><%= totalTeams %></strong></div>
+  <div class="card stat-card"><span>Cho duyet</span><strong><%= pendingTeams %></strong></div>
+  <div class="card stat-card"><span>Da duyet</span><strong><%= approvedTeams %></strong></div>
+  <div class="card stat-card"><span>Bi tu choi</span><strong><%= rejectedTeams %></strong></div>
+</section>
+
+<section class="container panel">
+  <h2>Danh sach doi</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ten doi</th>
+          <th>Doi truong</th>
+          <th>Email</th>
+          <th>So dien thoai</th>
+          <th>Trang thai</th>
+          <th>Dang ky</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% teams.forEach((team) => { %>
+          <tr>
+            <td><%= team.name %></td>
+            <td><%= team.captainName %></td>
+            <td><%= team.captainEmail %></td>
+            <td><%= team.phone %></td>
+            <td><span class="status-badge <%= team.status %>"><%= team.status %></span></td>
+            <td><%= formatDate(team.registeredAt) %></td>
+            <td><a class="btn btn-secondary btn-small" href="/admin/teams/<%= team._id %>">Xem chi tiet</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<%- include('../partials-footer') %>

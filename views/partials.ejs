@@ -1,0 +1,30 @@
+<% const flashType = flash?.type || ''; %>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | Lien Quan Tournament</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="/" class="brand">Lien Quan Cup</a>
+      <nav class="nav">
+        <a href="/">Trang chu</a>
+        <a href="/register">Dang ky doi</a>
+        <a href="/status">Tra cuu</a>
+        <a href="/admin/login">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <% if (flash) { %>
+    <div class="container flash <%= flashType %>"><%= flash.message %></div>
+  <% } %>
+
+  <main>

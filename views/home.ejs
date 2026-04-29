@@ -1,0 +1,54 @@
+<%- include('partials') %>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Giai dau phong trao</span>
+      <h1><%= tournament?.name || 'Giai Lien Quan' %></h1>
+      <p class="lead">Dang ky doi nhanh, duyet danh sach tap trung, theo doi trang thai minh bach cho toan bo giai dau.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/register">Dang ky ngay</a>
+        <a class="btn btn-secondary" href="/status">Tra cuu trang thai</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-stat">
+        <span>So doi da dang ky</span>
+        <strong><%= totalTeams %>/<%= tournament?.maxTeams || 0 %></strong>
+      </div>
+      <div class="hero-stat">
+        <span>So doi da duyet</span>
+        <strong><%= approvedTeams %></strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section-grid">
+  <article class="card">
+    <h2>Gioi thieu giai dau</h2>
+    <p>San choi danh cho cac doi Lien Quan giao luu, thi dau va tranh giai theo hinh thuc dang ky online.</p>
+  </article>
+  <article class="card">
+    <h2>Thoi gian dang ky</h2>
+    <p><%= formatDate(tournament?.registrationOpenAt) %> den <%= formatDate(tournament?.registrationCloseAt) %></p>
+  </article>
+  <article class="card">
+    <h2>Thoi gian thi dau</h2>
+    <p>Sau khi ket thuc dang ky va hoan tat duyet danh sach.</p>
+  </article>
+  <article class="card">
+    <h2>So doi toi da</h2>
+    <p><%= tournament?.maxTeams || 0 %> doi</p>
+  </article>
+  <article class="card">
+    <h2>Giai thuong</h2>
+    <p>Co cau giai thuong tuy chinh theo tung mua giai va cong bo khi bang dau chot.</p>
+  </article>
+  <article class="card accent">
+    <h2>Trang thai giai dau</h2>
+    <p><%= tournament?.status === 'open' ? 'Dang mo dang ky' : 'Tam dong' %></p>
+  </article>
+</section>
+
+<%- include('partials-footer') %>

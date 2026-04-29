@@ -1,0 +1,55 @@
+<%- include('partials') %>
+
+<section class="container page-head">
+  <h1>Tra cuu trang thai</h1>
+  <p>Nhap email doi truong hoac so dien thoai de xem ket qua dang ky.</p>
+</section>
+
+<section class="container lookup-layout">
+  <form class="panel" method="GET" action="/status">
+    <label>
+      <span>Email hoac so dien thoai</span>
+      <input type="text" name="identifier" value="<%= identifier %>" placeholder="vd: captain@mail.com hoac 0912345678" />
+    </label>
+    <button class="btn btn-primary" type="submit">Tra cuu</button>
+  </form>
+
+  <% if (identifier && !team) { %>
+    <div class="panel">
+      <p>Khong tim thay doi phu hop voi thong tin da nhap.</p>
+    </div>
+  <% } %>
+
+  <% if (team) { %>
+    <div class="panel stack-md">
+      <div class="status-head">
+        <div>
+          <h2><%= team.name %></h2>
+          <p>Doi truong: <%= team.captainName %> - <%= team.captainEmail %></p>
+        </div>
+        <span class="status-badge <%= team.status %>"><%= team.status %></span>
+      </div>
+      <p><strong>Khu vuc:</strong> <%= team.area %></p>
+      <p><strong>So dien thoai:</strong> <%= team.phone %></p>
+      <p><strong>Ngay dang ky:</strong> <%= formatDate(team.registeredAt) %></p>
+      <% if (team.rejectionReason) { %>
+        <p><strong>Ly do tu choi:</strong> <%= team.rejectionReason %></p>
+      <% } %>
+      <div>
+        <h3>Thanh vien</h3>
+        <div class="member-list">
+          <% members.forEach((member) => { %>
+            <div class="member-line">
+              <strong><%= member.fullName %></strong>
+              <span><%= member.uid %></span>
+              <span><%= member.rank || 'Chua cap nhat rank' %></span>
+              <span><%= member.role || 'Chua cap nhat vai tro' %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials-footer') %>

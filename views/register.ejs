@@ -1,0 +1,107 @@
+<%- include('partials') %>
+
+<section class="container page-head">
+  <h1>Dang ky doi</h1>
+  <p>Nhap day du thong tin doi, doi truong va danh sach thanh vien.</p>
+</section>
+
+<section class="container form-shell">
+  <% if (errors?.length) { %>
+    <div class="panel error-list">
+      <strong>Vui long sua cac loi sau:</strong>
+      <ul>
+        <% errors.forEach((error) => { %>
+          <li><%= error %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form action="/register" method="POST" enctype="multipart/form-data" class="stack-lg">
+    <div class="panel">
+      <h2>Thong tin doi</h2>
+      <div class="grid-2">
+        <label>
+          <span>Ten doi</span>
+          <input type="text" name="teamName" value="<%= formData?.teamName || '' %>" required />
+        </label>
+        <label>
+          <span>Khu vuc / truong / lop</span>
+          <input type="text" name="area" value="<%= formData?.area || '' %>" required />
+        </label>
+        <label class="full">
+          <span>Logo doi (neu co)</span>
+          <input type="file" name="logo" accept="image/*" />
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Thong tin doi truong</h2>
+      <div class="grid-2">
+        <label>
+          <span>Ho ten</span>
+          <input type="text" name="captainName" value="<%= formData?.captainName || '' %>" required />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="captainEmail" value="<%= formData?.captainEmail || '' %>" required />
+        </label>
+        <label>
+          <span>So dien thoai</span>
+          <input type="text" name="phone" value="<%= formData?.phone || '' %>" required />
+        </label>
+        <label>
+          <span>UID Lien Quan</span>
+          <input type="text" name="captainUid" value="<%= formData?.captainUid || '' %>" required />
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Danh sach thanh vien</h2>
+          <p>Can tu 5 den 7 thanh vien. Moi thanh vien can co ho ten va UID.</p>
+        </div>
+      </div>
+      <div class="stack-md">
+        <% for (let i = 0; i < 7; i += 1) { %>
+          <div class="member-card">
+            <h3><%= i < 5 ? `Thanh vien ${i + 1}` : `Du bi ${i - 4}` %></h3>
+            <div class="grid-4">
+              <label>
+                <span>Ho ten</span>
+                <input type="text" name="memberName" value="<%= Array.isArray(formData?.memberName) ? (formData.memberName[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> />
+              </label>
+              <label>
+                <span>UID</span>
+                <input type="text" name="memberUid" value="<%= Array.isArray(formData?.memberUid) ? (formData.memberUid[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> />
+              </label>
+              <label>
+                <span>Rank</span>
+                <input type="text" name="memberRank" value="<%= Array.isArray(formData?.memberRank) ? (formData.memberRank[i] || '') : '' %>" />
+              </label>
+              <label>
+                <span>Vai tro</span>
+                <input type="text" name="memberRole" value="<%= Array.isArray(formData?.memberRole) ? (formData.memberRole[i] || '') : '' %>" placeholder="VD: Rung, Mid, Tro thu" />
+              </label>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Dieu khoan tham gia</h2>
+      <label class="check-row">
+        <input type="checkbox" name="agreeTerms" <%= formData?.agreeTerms ? 'checked' : '' %> />
+        <span>Toi cam ket thong tin la chinh xac va chap nhan quy dinh cua giai dau.</span>
+      </label>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Gui dang ky</button>
+  </form>
+</section>
+
+<%- include('partials-footer') %>

@@ -1,0 +1,18 @@
+<%- include('../partials') %>
+
+<section class="container auth-shell">
+  <form class="panel auth-card" method="POST" action="/admin/login">
+    <h1>Admin dang nhap</h1>
+    <label>
+      <span>Email admin</span>
+      <input type="email" name="email" required />
+    </label>
+    <label>
+      <span>Mat khau</span>
+      <input type="password" name="password" required />
+    </label>
+    <button class="btn btn-primary" type="submit">Dang nhap</button>
+  </form>
+</section>
+
+<%- include('../partials-footer') %>
