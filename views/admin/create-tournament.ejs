@@ -1,0 +1,47 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1>Tao giai dau</h1>
+    <p>Nhap thong tin cho giai dau moi.</p>
+  </div>
+  <a class="btn btn-secondary" href="/admin/dashboard">Quay lai</a>
+</section>
+
+<section class="container panel">
+  <form method="POST" action="/admin/tournament/create" class="form-group">
+    <div class="form-item">
+      <label for="name">Ten giai dau *</label>
+      <input type="text" id="name" name="name" required value="">
+    </div>
+
+    <div class="form-item">
+      <label for="registrationOpenAt">Thoi diem mo dang ky *</label>
+      <input type="datetime-local" id="registrationOpenAt" name="registrationOpenAt" required value="">
+    </div>
+
+    <div class="form-item">
+      <label for="registrationCloseAt">Thoi diem dong dang ky *</label>
+      <input type="datetime-local" id="registrationCloseAt" name="registrationCloseAt" required value="">
+    </div>
+
+    <div class="form-item">
+      <label for="maxTeams">So toi da cac doi *</label>
+      <input type="number" id="maxTeams" name="maxTeams" required min="2" value="32">
+    </div>
+
+    <div class="form-item">
+      <label for="status">Trang thai *</label>
+      <select id="status" name="status" required>
+        <option value="draft">Draft</option>
+        <option value="open" selected>Mo</option>
+        <option value="closed">Dong</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Tao giai dau</button>
+    <a class="btn btn-secondary" href="/admin/dashboard">Huy</a>
+  </form>
+</section>
+
+<%- include('../partials-footer') %>

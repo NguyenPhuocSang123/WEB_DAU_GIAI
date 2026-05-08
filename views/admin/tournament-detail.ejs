@@ -1,0 +1,106 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1><%= tournament.name %></h1>
+    <p>
+      Trạng thái: <strong style="color: <%= tournament.status === 'closed' ? '#ff9800' : '#4caf50' %>;">
+        <%= tournament.status === 'closed' ? 'Đã chốt' : 'Đang mở' %>
+      </strong>
+    </p>
+    <p>
+      Số đội đã duyệt: <strong><%= approvedTeams %></strong> / <%= totalTeams %>
+    </p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <% if (tournament.status === 'closed' && hasMatches) { %>
+      <a class="btn btn-primary" href="/admin/schedule?tournamentId=<%= tournament._id %>">Quay lại lịch thi đấu</a>
+    <% } else { %>
+      <a class="btn btn-primary" href="/admin/schedule?tournamentId=<%= tournament._id %>">Chốt & tạo lịch</a>
+    <% } %>
+    <a class="btn btn-secondary" href="/admin/dashboard">Quay lại dashboard</a>
+  </div>
+</section>
+
+<section class="container panel">
+  <h2>Thông tin giải đấu</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+    <div class="card" style="padding: 16px;">
+      <span style="color: #999; font-size: 12px; text-transform: uppercase;">Tên giải</span>
+      <strong><%= tournament.name %></strong>
+    </div>
+    <div class="card" style="padding: 16px;">
+      <span style="color: #999; font-size: 12px; text-transform: uppercase;">Số đội tối đa</span>
+      <strong><%= tournament.maxTeams %></strong>
+    </div>
+    <div class="card" style="padding: 16px;">
+      <span style="color: #999; font-size: 12px; text-transform: uppercase;">Đã duyệt / Tổng</span>
+      <strong><%= approvedTeams %> / <%= totalTeams %></strong>
+    </div>
+    <div class="card" style="padding: 16px;">
+      <span style="color: #999; font-size: 12px; text-transform: uppercase;">Trạng thái</span>
+      <strong style="color: <%= tournament.status === 'closed' ? '#ff9800' : '#4caf50' %>;">
+        <%= tournament.status === 'closed' ? 'Đã chốt' : 'Đang mở' %>
+      </strong>
+    </div>
+  </div>
+</section>
+
+<section class="container panel">
+  <h2>Danh sách các đội</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tên đội</th>
+          <th>Trưởng đội</th>
+          <th>Email</th>
+          <th>Điện thoại</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% teams.forEach(team => { %>
+          <tr>
+            <td><%= team.name %></td>
+            <td><%= team.captainName %></td>
+            <td><%= team.captainEmail %></td>
+            <td><%= team.phone %></td>
+            <td>
+              <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;
+                color: <%= 
+                  team.status === 'approved' ? '#4caf50' : 
+                  team.status === 'rejected' ? '#dc2626' : 
+                  '#f59e0b' 
+                %>;
+                background: <%= 
+                  team.status === 'approved' ? 'rgba(76, 175, 80, 0.1)' : 
+                  team.status === 'rejected' ? 'rgba(220, 38, 38, 0.1)' : 
+                  'rgba(245, 158, 11, 0.1)' 
+                %>;">
+                <%= team.status === 'approved' ? 'Đã duyệt' : team.status === 'rejected' ? 'Từ chối' : 'Chờ duyệt' %>
+              </span>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="container panel">
+  <h2>Hành động</h2>
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <% if (tournament.status === 'closed' && hasMatches) { %>
+      <p style="color: #4caf50; margin: 0 0 12px 0;">✓ Lịch thi đấu đã được chốt. Bạn có thể:</p>
+      <a class="btn btn-primary" href="/admin/schedule?tournamentId=<%= tournament._id %>">Xem & chỉnh sửa lịch thi đấu</a>
+      <a class="btn btn-secondary" href="/tournament/<%= tournament._id %>/bracket">Xem sơ đồ trận đấu</a>
+    <% } else if (approvedTeams < 2) { %>
+      <p style="color: #ff9800; margin: 0 0 12px 0;">⚠ Chưa đủ đội (tối thiểu 2 đội) để chốt lịch thi đấu.</p>
+      <button class="btn btn-secondary" disabled>Chốt lịch (chưa đủ đội)</button>
+    <% } else { %>
+      <p style="color: #4caf50; margin: 0 0 12px 0;">✓ Đã đủ điều kiện. Bấm vào nút dưới để chốt lịch thi đấu:</p>
+      <a class="btn btn-primary" href="/admin/schedule?tournamentId=<%= tournament._id %>">Chốt lịch thi đấu</a>
+    <% } %>
+  </div>
+</section>

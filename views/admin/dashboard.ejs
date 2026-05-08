@@ -5,9 +5,13 @@
     <h1>Admin dashboard</h1>
     <p>Theo doi danh sach doi va xu ly phe duyet.</p>
   </div>
-  <form method="POST" action="/admin/logout">
-    <button class="btn btn-secondary" type="submit">Dang xuat</button>
-  </form>
+  <div style="display: flex; gap: 10px;">
+    <a class="btn btn-primary" href="/admin/tournament/create">Tao giai dau</a>
+    <a class="btn btn-primary" href="/admin/tournaments">Quan ly giai dau</a>
+    <form method="POST" action="/admin/logout">
+      <button class="btn btn-secondary" type="submit">Dang xuat</button>
+    </form>
+  </div>
 </section>
 
 <section class="container summary-grid">
@@ -17,6 +21,40 @@
   <div class="card stat-card"><span>Bi tu choi</span><strong><%= rejectedTeams %></strong></div>
 </section>
 
+<div class="stats">
+  <h2>Tổng số giải đấu đã tạo: <%= totalTournaments %></h2>
+</div>
+
+<section class="container panel">
+  <h2>Chốt lịch thi đấu</h2>
+  <p>Chọn một giải đấu để chốt lịch thi đấu và gửi email cho các đội trưởng.</p>
+  
+  <div class="tournament-list" style="display: grid; gap: 12px;">
+    <% if (tournaments && tournaments.length > 0) { %>
+      <% tournaments.forEach(t => { %>
+        <div class="card" style="padding: 16px; border-left: 4px solid #7c3aed;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="margin: 0 0 8px 0;"><%= t.name %></h3>
+              <p style="margin: 0; color: #666; font-size: 14px;">
+                Đội đã duyệt: <strong><%= t.approvedTeams %></strong> / <%= t.totalTeams %>
+                <% if (t.status === 'closed') { %>
+                  | <span style="color: #ff9800; font-weight: bold;">Lịch đã chốt</span>
+                <% } %>
+              </p>
+            </div>
+            <a class="btn btn-primary" href="/admin/tournaments/<%= t._id %>/detail">
+              <%= t.status === 'closed' ? 'Xem lịch' : 'Chốt lịch' %>
+            </a>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p style="color: #999;">Chưa có giải đấu nào. <a href="/admin/tournament/create">Tạo giải đấu mới</a></p>
+    <% } %>
+  </div>
+</section>
+
 <section class="container panel">
   <h2>Danh sach doi</h2>
   <div class="table-wrap">
@@ -24,6 +62,7 @@
       <thead>
         <tr>
           <th>Ten doi</th>
+          <th>Giai dau</th>
           <th>Doi truong</th>
           <th>Email</th>
           <th>So dien thoai</th>
@@ -36,6 +75,7 @@
         <% teams.forEach((team) => { %>
           <tr>
             <td><%= team.name %></td>
+            <td><strong><%= team.tournamentId?.name || 'N/A' %></strong></td>
             <td><%= team.captainName %></td>
             <td><%= team.captainEmail %></td>
             <td><%= team.phone %></td>

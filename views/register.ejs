@@ -1,11 +1,66 @@
 <%- include('partials') %>
 
+<% 
+  const now = new Date();
+%>
+
 <section class="container page-head">
   <h1>Dang ky doi</h1>
-  <p>Nhap day du thong tin doi, doi truong va danh sach thanh vien.</p>
+  <p>Chon giai dau va nhap day du thong tin doi, doi truong va danh sach thanh vien.</p>
 </section>
 
+<% if (selectedTournament) { %>
+  <section class="container">
+    <div class="card" style="background: linear-gradient(135deg, <%= (selectedTournament.totalTeams < selectedTournament.maxTeams) ? '#E8F5E9' : '#FFF3E0' %>, <%= (selectedTournament.totalTeams < selectedTournament.maxTeams) ? '#C8E6C9' : '#FFE0B2' %>); padding: 20px; margin-bottom: 20px;">
+      <h2 style="margin-top: 0; color: <%= (selectedTournament.totalTeams < selectedTournament.maxTeams) ? '#2E7D32' : '#E65100' %>;"><%= selectedTournament.name %></h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+        <div>
+          <small style="font-weight: bold; color: #666;">SO DOI / SLOT</small>
+          <p style="margin: 5px 0; font-weight: bold; font-size: 14px;">
+            <%= selectedTournament.totalTeams %>/<%= selectedTournament.maxTeams %> 
+            <span style="color: <%= selectedTournament.isFull ? '#FF5252' : '#4CAF50' %>;">(<%= selectedTournament.maxTeams - selectedTournament.totalTeams %> con)</span>
+          </p>
+        </div>
+        <div>
+          <small style="font-weight: bold; color: #666;">DONG DANG KY</small>
+          <p style="margin: 5px 0; font-weight: bold; font-size: 14px;">
+            <%= formatDate(selectedTournament.registrationCloseAt) %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+<% if (tournaments && tournaments.length > 1) { %>
+  <section class="container">
+    <div class="panel" style="margin-bottom: 20px;">
+      <h3>Chon giai dau de dang ky:</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+        <% tournaments.forEach(t => { %>
+          <a href="/register?tournament=<%= t._id %>" class="card" style="text-decoration: none; color: inherit; padding: 15px; cursor: pointer; <%= t._id.toString() === selectedTournament?._id.toString() ? 'border: 2px solid #4CAF50; background: #F1F8F6;' : 'border: 1px solid #ddd;' %>">
+            <h4 style="margin: 0 0 10px 0;"><%= t.name %></h4>
+            <p style="margin: 5px 0; font-size: 12px; color: #666;">
+              Da duyet: <%= t.approvedTeams || 0 %>/<%= t.maxTeams %>
+            </p>
+            <p style="margin: 5px 0; font-size: 12px; color: <%= t.isFull ? '#FF5252' : '#4CAF50' %>; font-weight: bold;">
+              <%= t.isFull ? 'DA DAY' : 'Con ' + (t.maxTeams - t.totalTeams) + ' slot' %>
+            </p>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+<% } %>
+
 <section class="container form-shell">
+  <% if (!selectedTournament) { %>
+    <div class="panel error-list" style="background: #FFF3CD; border-color: #FFC107; color: #856404;">
+      <strong style="color: #856404;">Thong bao:</strong>
+      <p>Hien tai khong co giai dau nao trong thoi gian dang ky. Vui long quay lai sau.</p>
+    </div>
+  <% } %>
+
   <% if (errors?.length) { %>
     <div class="panel error-list">
       <strong>Vui long sua cac loi sau:</strong>
@@ -17,21 +72,22 @@
     </div>
   <% } %>
 
-  <form action="/register" method="POST" enctype="multipart/form-data" class="stack-lg">
+  <form action="/register" method="POST" enctype="multipart/form-data" class="stack-lg" <%= !selectedTournament ? 'style="opacity: 0.6; pointer-events: none;"' : '' %>>
+    <input type="hidden" name="tournamentId" value="<%= selectedTournament?._id || '' %>" />
     <div class="panel">
       <h2>Thong tin doi</h2>
       <div class="grid-2">
         <label>
           <span>Ten doi</span>
-          <input type="text" name="teamName" value="<%= formData?.teamName || '' %>" required />
+          <input type="text" name="teamName" value="<%= formData?.teamName || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
         <label>
           <span>Khu vuc / truong / lop</span>
-          <input type="text" name="area" value="<%= formData?.area || '' %>" required />
+          <input type="text" name="area" value="<%= formData?.area || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
         <label class="full">
           <span>Logo doi (neu co)</span>
-          <input type="file" name="logo" accept="image/*" />
+          <input type="file" name="logo" accept="image/*" <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
       </div>
     </div>
@@ -41,19 +97,19 @@
       <div class="grid-2">
         <label>
           <span>Ho ten</span>
-          <input type="text" name="captainName" value="<%= formData?.captainName || '' %>" required />
+          <input type="text" name="captainName" value="<%= formData?.captainName || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
         <label>
           <span>Email</span>
-          <input type="email" name="captainEmail" value="<%= formData?.captainEmail || '' %>" required />
+          <input type="email" name="captainEmail" value="<%= formData?.captainEmail || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
         <label>
           <span>So dien thoai</span>
-          <input type="text" name="phone" value="<%= formData?.phone || '' %>" required />
+          <input type="text" name="phone" value="<%= formData?.phone || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
         <label>
           <span>UID Lien Quan</span>
-          <input type="text" name="captainUid" value="<%= formData?.captainUid || '' %>" required />
+          <input type="text" name="captainUid" value="<%= formData?.captainUid || '' %>" required <%= !selectedTournament ? 'disabled' : '' %> />
         </label>
       </div>
     </div>
@@ -72,19 +128,19 @@
             <div class="grid-4">
               <label>
                 <span>Ho ten</span>
-                <input type="text" name="memberName" value="<%= Array.isArray(formData?.memberName) ? (formData.memberName[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> />
+                <input type="text" name="memberName" value="<%= Array.isArray(formData?.memberName) ? (formData.memberName[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> <%= !selectedTournament ? 'disabled' : '' %> />
               </label>
               <label>
                 <span>UID</span>
-                <input type="text" name="memberUid" value="<%= Array.isArray(formData?.memberUid) ? (formData.memberUid[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> />
+                <input type="text" name="memberUid" value="<%= Array.isArray(formData?.memberUid) ? (formData.memberUid[i] || '') : '' %>" <%= i < 5 ? 'required' : '' %> <%= !selectedTournament ? 'disabled' : '' %> />
               </label>
               <label>
                 <span>Rank</span>
-                <input type="text" name="memberRank" value="<%= Array.isArray(formData?.memberRank) ? (formData.memberRank[i] || '') : '' %>" />
+                <input type="text" name="memberRank" value="<%= Array.isArray(formData?.memberRank) ? (formData.memberRank[i] || '') : '' %>" <%= !selectedTournament ? 'disabled' : '' %> />
               </label>
               <label>
                 <span>Vai tro</span>
-                <input type="text" name="memberRole" value="<%= Array.isArray(formData?.memberRole) ? (formData.memberRole[i] || '') : '' %>" placeholder="VD: Rung, Mid, Tro thu" />
+                <input type="text" name="memberRole" value="<%= Array.isArray(formData?.memberRole) ? (formData.memberRole[i] || '') : '' %>" placeholder="VD: Rung, Mid, Tro thu" <%= !selectedTournament ? 'disabled' : '' %> />
               </label>
             </div>
           </div>
@@ -95,12 +151,12 @@
     <div class="panel">
       <h2>Dieu khoan tham gia</h2>
       <label class="check-row">
-        <input type="checkbox" name="agreeTerms" <%= formData?.agreeTerms ? 'checked' : '' %> />
+        <input type="checkbox" name="agreeTerms" <%= formData?.agreeTerms ? 'checked' : '' %> <%= !selectedTournament ? 'disabled' : '' %> />
         <span>Toi cam ket thong tin la chinh xac va chap nhan quy dinh cua giai dau.</span>
       </label>
     </div>
 
-    <button class="btn btn-primary" type="submit">Gui dang ky</button>
+    <button class="btn btn-primary" type="submit" <%= !selectedTournament ? 'disabled' : '' %> style="<%= !selectedTournament ? 'opacity: 0.5; cursor: not-allowed;' : '' %>">Gui dang ky</button>
   </form>
 </section>
 

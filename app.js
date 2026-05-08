@@ -13,6 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/lien-quan-tournament';
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 const isProduction = process.env.NODE_ENV === 'production';
 
 async function ensureTournament() {
@@ -51,7 +52,7 @@ if (isProduction) {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadDir));
 
 app.use(
   session({

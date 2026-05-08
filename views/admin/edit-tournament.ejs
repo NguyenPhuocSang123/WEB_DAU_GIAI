@@ -1,0 +1,62 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1>Chỉnh sửa giải đấu</h1>
+    <p>Cập nhật thông tin giải đấu.</p>
+  </div>
+  <a class="btn btn-secondary" href="/admin/tournaments">Quay lại</a>
+</section>
+
+<section class="container">
+  <div class="card" style="background: #f5f5f5; padding: 15px; margin-bottom: 20px;">
+    <p><strong>Thông tin hiện tại:</strong></p>
+    <p>Tổng đội đã đăng ký: <strong><%= totalTeams %></strong></p>
+    <p>Đội đã duyệt: <strong><%= approvedTeams %></strong></p>
+    <% if (tournament.status === 'closed') { %>
+      <p style="color: #FF9800;">⚠️ Giải đấu này đã bị khóa (lịch thi đấu đã được tạo). Bạn vẫn có thể cập nhật thông tin cơ bản.</p>
+    <% } %>
+  </div>
+</section>
+
+<section class="container panel">
+  <form method="POST" action="/admin/tournaments/<%= tournament._id %>/edit" class="form-group">
+    <div class="form-item">
+      <label for="name">Tên giải đấu *</label>
+      <input type="text" id="name" name="name" required value="<%= tournament.name %>">
+    </div>
+
+    <div class="form-item">
+      <label for="registrationOpenAt">Thời điểm mở đăng ký *</label>
+      <input type="datetime-local" id="registrationOpenAt" name="registrationOpenAt" required value="<%= toDatetimeLocalValue(tournament.registrationOpenAt) %>">
+    </div>
+
+    <div class="form-item">
+      <label for="registrationCloseAt">Thời điểm đóng đăng ký *</label>
+      <input type="datetime-local" id="registrationCloseAt" name="registrationCloseAt" required value="<%= toDatetimeLocalValue(tournament.registrationCloseAt) %>">
+    </div>
+
+    <div class="form-item">
+      <label for="maxTeams">Số tối đa các đội *</label>
+      <input type="number" id="maxTeams" name="maxTeams" required min="2" value="<%= tournament.maxTeams %>">
+      <small style="color: #666;">Hiện có <%= totalTeams %> đội đã đăng ký</small>
+    </div>
+
+    <div class="form-item">
+      <label for="status">Trạng thái *</label>
+      <select id="status" name="status" required>
+        <option value="draft" <%= tournament.status === 'draft' ? 'selected' : '' %>>Draft</option>
+        <option value="open" <%= tournament.status === 'open' ? 'selected' : '' %>>Mở</option>
+        <option value="closed" <%= tournament.status === 'closed' ? 'selected' : '' %>>Đóng</option>
+      </select>
+      <small style="color: #666;">Trạng thái hiện tại: <strong><%= tournament.status %></strong></small>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+      <a class="btn btn-secondary" href="/admin/tournaments">Hủy</a>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials-footer') %>

@@ -142,3 +142,8 @@ Neu dung, trang nay tra ve JSON:
 - Email hien dang la email mo phong va duoc in ra terminal server.
 - Session admin hien dung `express-session` memory store, phu hop demo va do an. Neu deploy that cho nhieu nguoi dung, nen doi sang `connect-mongo`.
 - Thu muc `uploads/` luu tren file system cua server. Tren Render, file upload co tinh chat tam thoi va co the mat sau redeploy/restart. Neu ban muon giu logo lau dai, nen chuyen sang Cloudinary, S3 hoac Supabase Storage.
+
+## Deploy tren VPS
+
+- Xem file `DEPLOY_VPS.md` de lam theo tung lenh.
+- Bien `UPLOAD_DIR` cho phep ban luu file upload ben ngoai source code, tranh mat file sau khi deploy lai.

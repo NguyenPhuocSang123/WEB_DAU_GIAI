@@ -1,0 +1,257 @@
+<%- include('partials') %>
+
+<% 
+  const now = new Date();
+  const isOpen = tournament.status === 'open' && now >= new Date(tournament.registrationOpenAt) && now <= new Date(tournament.registrationCloseAt);
+  const isFull = totalTeams >= tournament.maxTeams;
+  const closeDate = new Date(tournament.registrationCloseAt);
+  const daysLeft = Math.ceil((closeDate - now) / (1000 * 60 * 60 * 24));
+  const hoursLeft = Math.ceil((closeDate - now) / (1000 * 60 * 60));
+  let statusText = '';
+  let statusColor = '';
+  
+  if (!isOpen && tournament.status !== 'open') {
+    statusText = 'CHUA MO';
+    statusColor = '#999';
+  } else if (isFull) {
+    statusText = 'DA DAY - KHONG CON SLOT DANG KY';
+    statusColor = '#FF5252';
+  } else if (isOpen) {
+    if (daysLeft <= 0 && hoursLeft > 0) {
+      statusText = 'SAP DONG - CHI CON ' + hoursLeft + ' GIO';
+      statusColor = '#FF6F00';
+    } else if (daysLeft <= 1) {
+      statusText = 'SAP DONG - CHI CON ' + daysLeft + ' NGAY';
+      statusColor = '#FF9800';
+    } else {
+      statusText = 'DANG MO - CON ' + daysLeft + ' NGAY';
+      statusColor = '#4CAF50';
+    }
+  } else {
+    statusText = 'DA DONG DANG KY';
+    statusColor = '#FF6F00';
+  }
+%>
+
+<section class="container page-head">
+  <div>
+    <h1><%= tournament.name %></h1>
+    <p style="color: <%= statusColor %>; font-weight: bold; font-size: 16px; margin-top: 10px;">
+      <%= statusText %>
+    </p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <% if (isTournamentFull && approvedTeams > 0) { %>
+      <a class="btn btn-primary" href="/tournament/<%= tournament._id %>/bracket" style="background-color: #7C3AED;">Xem so do tran dau</a>
+    <% } %>
+    <a class="btn btn-secondary" href="/">Quay lai</a>
+  </div>
+</section>
+
+<section class="container">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+  <div class="card stat-card" style="border-left: 5px solid <%= isFull ? '#FF5252' : '#4CAF50' %>;">
+      <span>So doi da duyet</span>
+      <strong><%= approvedTeams %>/<%= tournament.maxTeams %></strong>
+      <small style="color: <%= isFull ? '#FF5252' : '#4CAF50' %>; margin-top: 8px; display: block; font-weight: bold;">
+        <% if (isFull) { %>
+          DA DAY
+        <% } else { %>
+          Con <%= tournament.maxTeams - totalTeams %> slot
+        <% } %>
+      </small>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid #2196F3;">
+      <span>So doi da duyet</span>
+      <strong><%= approvedTeams %></strong>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid <%= statusColor %>;">
+      <span>Trang thai</span>
+      <strong style="color: <%= statusColor %>; font-size: 14px;">
+        <% if (isOpen && !isFull) { %>
+          DANG MO
+        <% } else if (isFull) { %>
+          DAY
+        <% } else if (tournament.status === 'closed') { %>
+          DA DONG
+        <% } else { %>
+          CHUA MO
+        <% } %>
+      </strong>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid #FF9800;">
+      <span>Thoi gian con lai</span>
+      <strong style="font-size: 18px;">
+        <% if (isOpen) { %>
+          <% if (daysLeft > 0) { %>
+            <%= daysLeft %> ngay
+          <% } else if (hoursLeft > 0) { %>
+            <%= hoursLeft %> gio
+          <% } else { %>
+            <span style="color: #FF5252;">HET HAN</span>
+          <% } %>
+        <% } else { %>
+          -
+        <% } %>
+      </strong>
+    </div>
+  </div>
+</section>
+
+<section class="container panel">
+  <h2>Thong tin giai dau</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+    <div>
+      <p><strong>Mo dang ky:</strong></p>
+      <p><%= formatDate(tournament.registrationOpenAt) %></p>
+    </div>
+    <div>
+      <p><strong>Dong dang ky:</strong></p>
+      <p><%= formatDate(tournament.registrationCloseAt) %></p>
+    </div>
+    <div>
+      <p><strong>So toi da cac doi:</strong></p>
+      <p><%= tournament.maxTeams %></p>
+    </div>
+    <div>
+      <p><strong>Trang thai:</strong></p>
+      <p>
+        <% if (tournament.status === 'open') { %>
+          <span style="color: #4CAF50; font-weight: bold;">Dang mo dang ky</span>
+        <% } else if (tournament.status === 'closed') { %>
+          <span style="color: #FF9800; font-weight: bold;">Da khoa</span>
+        <% } else { %>
+          <span style="color: #999;">Draft</span>
+        <% } %>
+      </p>
+    </div>
+  </div>
+</section>
+
+<% if (tournament.scheduleGeneratedAt && scheduleMatches && scheduleMatches.length > 0) { %>
+<section class="container panel">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="margin: 0;">Lich dau chinh thuc</h2>
+    <span style="background: #4CAF50; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">DUNG CHOT</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 12%;">Vong</th>
+          <th style="width: 12%;">Tran</th>
+          <th style="width: 25%;">Thoi gian</th>
+          <th style="width: 18%;">Doi nha</th>
+          <th style="width: 6%; text-align: center;">-</th>
+          <th style="width: 18%;">Doi khach</th>
+          <th style="width: 9%; text-align: center;">Ket qua</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% 
+          scheduleMatches.forEach((match) => {
+            let homeTeamName = '';
+            let awayTeamName = '';
+            let homeTeamId = null;
+            let awayTeamId = null;
+            
+            if (match.homeSlotType === 'team' && match.homeTeamId) {
+              homeTeamName = match.homeTeamId.name || 'TBD';
+              homeTeamId = match.homeTeamId._id;
+            } else if (match.homeSlotType === 'winner') {
+              homeTeamName = 'Chu nhan tran ' + match.homeFromMatchId;
+            }
+            
+            if (match.awaySlotType === 'team' && match.awayTeamId) {
+              awayTeamName = match.awayTeamId.name || 'TBD';
+              awayTeamId = match.awayTeamId._id;
+            } else if (match.awaySlotType === 'winner') {
+              awayTeamName = 'Chu nhan tran ' + match.awayFromMatchId;
+            }
+        %>
+          <tr>
+            <td><strong>R<%= match.round %></strong></td>
+            <td><strong>T<%= match.matchIndex %></strong></td>
+            <td>
+              <% if (match.startAt) { %>
+                <%= formatDate(match.startAt) %>
+              <% } else { %>
+                <span style="color: #999;">-</span>
+              <% } %>
+            </td>
+            <td><strong><%= homeTeamName %></strong></td>
+            <td style="text-align: center; font-weight: bold; color: var(--muted);">VS</td>
+            <td><strong><%= awayTeamName %></strong></td>
+            <td style="text-align: center; color: #999;">-</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <p style="color: var(--muted); font-size: 14px; margin-top: 16px; text-align: center;">Lich dau da duoc admin chot ngay: <%= formatDate(tournament.scheduleGeneratedAt) %></p>
+</section>
+<% } else if (!tournament.scheduleGeneratedAt) { %>
+<section class="container panel">
+  <div style="padding: 40px 20px; text-align: center;">
+    <p style="color: var(--muted); font-size: 16px; margin: 0;">📋 Admin dang chuan bi lich dau chinh thuc</p>
+    <p style="color: #999; font-size: 14px; margin-top: 8px;">Vui long quay lai sau de xem lich thi dau.</p>
+  </div>
+</section>
+<% } %>
+
+<% if (bracketHTML) { %>
+<section class="container panel">
+  <h2>Sơ đồ trận đấu</h2>
+  <div class="bracket-wrapper">
+    <%- bracketHTML %>
+  </div>
+</section>
+<% } %>
+
+<section class="container panel">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Danh sach cac doi da duyet</h2>
+    <% if (canRegister && tournament.status === 'open') { %>
+      <a class="btn btn-primary" href="/register?tournament=<%= tournament._id %>">Dang ky doi</a>
+    <% } else if (!canRegister) { %>
+      <span style="color: #FF5252; font-weight: bold;">Giai da day, khong con slot dang ky</span>
+    <% } else if (tournament.status !== 'open') { %>
+      <span style="color: #FF9800; font-weight: bold;">Giai dau da dong dang ky</span>
+    <% } %>
+  </div>
+
+  <% if (teams && teams.length > 0) { %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Ten doi</th>
+            <th>Doi truong</th>
+            <th>Email</th>
+            <th>So dien thoai</th>
+            <th>Khu vuc</th>
+            <th>Ngay dang ky</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% teams.forEach((team, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><strong><%= team.name %></strong></td>
+              <td><%= team.captainName %></td>
+              <td><%= team.captainEmail %></td>
+              <td><%= team.phone %></td>
+              <td><%= team.area %></td>
+              <td><%= formatDate(team.registeredAt) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p style="text-align: center; padding: 20px; color: #999;">Chua co doi nao dang ky cho giai dau nay.</p>
+  <% } %>
+</section>
+
+<%- include('partials-footer') %>

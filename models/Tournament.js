@@ -24,6 +24,15 @@ const tournamentSchema = new mongoose.Schema(
       type: String,
       enum: ['draft', 'open', 'closed'],
       default: 'open'
+    },
+    started: {
+      type: Boolean,
+      default: false
+    },
+    // thời điểm admin tạo lịch thi đấu
+    scheduleGeneratedAt: {
+      type: Date,
+      default: null
     }
   },
   {

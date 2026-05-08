@@ -17,6 +17,7 @@
     <% if (team.logoPath) { %>
       <img class="team-logo" src="<%= team.logoPath %>" alt="Logo <%= team.name %>" />
     <% } %>
+    <p><strong>Giai dau:</strong> <span style="color: #4CAF50; font-weight: bold;"><%= team.tournamentId?.name || 'N/A' %></span></p>
     <p><strong>Khu vuc / truong / lop:</strong> <%= team.area %></p>
     <p><strong>So dien thoai:</strong> <%= team.phone %></p>
     <p><strong>UID doi truong:</strong> <%= team.captainUid %></p>

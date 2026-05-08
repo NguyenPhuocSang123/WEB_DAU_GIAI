@@ -377,6 +377,20 @@ td {
   text-align: left;
 }
 
+th {
+  background: rgba(124, 77, 255, 0.1);
+  font-weight: 600;
+  color: #d7cbff;
+}
+
+tbody tr:hover {
+  background: rgba(124, 77, 255, 0.05);
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .team-logo {
   width: 96px;
   height: 96px;
@@ -415,4 +429,98 @@ td {
   .nav {
     justify-content: flex-start;
   }
+}
+
+/* Tournament Bracket Styles */
+.bracket-wrapper {
+  overflow-x: auto;
+  margin: 20px 0;
+  padding: 20px 0;
+}
+
+.bracket-container {
+  display: flex;
+  gap: 40px;
+  min-width: min-content;
+}
+
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.bracket-round h3 {
+  margin: 0 0 15px 0;
+  padding: 10px;
+  background: var(--secondary);
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  border-left: 4px solid var(--primary);
+}
+
+.matches {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: space-around;
+  min-height: 300px;
+}
+
+.match {
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.match:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 12px rgba(124, 77, 255, 0.3);
+}
+
+.match .team {
+  padding: 10px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--panel);
+  margin: 4px 0;
+  border-radius: 4px;
+  border-left: 3px solid var(--success);
+}
+
+.match .team-2 {
+  border-left-color: var(--primary);
+}
+
+.match .vs {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 2px 0;
+  font-weight: 600;
+}
+
+.match .match-time {
+  text-align: center;
+  font-size: 11px;
+  color: var(--warning);
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.bracket-note {
+  margin-top: 30px;
+}
+
+.bracket-note p {
+  margin: 0;
+  font-size: 14px;
 }

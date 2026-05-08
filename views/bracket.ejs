@@ -1,0 +1,135 @@
+<%- include('partials') %>
+
+<% 
+  const now = new Date();
+  const isOpen = tournament.status === 'open' && now >= new Date(tournament.registrationOpenAt) && now <= new Date(tournament.registrationCloseAt);
+  const closeDate = new Date(tournament.registrationCloseAt);
+  const daysLeft = Math.ceil((closeDate - now) / (1000 * 60 * 60 * 24));
+  let statusColor = '';
+  
+  if (!isOpen && tournament.status !== 'open') {
+    statusColor = '#999';
+  } else if (isOpen) {
+    if (daysLeft <= 0) {
+      statusColor = '#FF6F00';
+    } else if (daysLeft <= 1) {
+      statusColor = '#FF9800';
+    } else {
+      statusColor = '#4CAF50';
+    }
+  } else {
+    statusColor = '#FF6F00';
+  }
+%>
+
+<section class="container page-head">
+  <div>
+    <h1><%= tournament.name %> - Sơ đồ trận đấu</h1>
+    <p style="color: <%= statusColor %>; font-weight: bold; font-size: 16px; margin-top: 10px;">
+      <% if (isTournamentFull && approvedTeams > 0) { %>
+        <%= approvedTeams %> đội - Sẵn sàng thi đấu
+      <% } else { %>
+        Chưa đủ điều kiện tạo sơ đồ
+      <% } %>
+    </p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a class="btn btn-secondary" href="/tournament/<%= tournament._id %>">Quay lai chi tiet giai</a>
+    <a class="btn btn-secondary" href="/">Quay lai trang chu</a>
+  </div>
+</section>
+
+<section class="container">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+    <div class="card stat-card" style="border-left: 5px solid #2196F3;">
+      <span>Tên giải đấu</span>
+      <strong><%= tournament.name %></strong>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid #4CAF50;">
+      <span>Số đội tham gia</span>
+      <strong><%= approvedTeams %>/<%= tournament.maxTeams %></strong>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid #FF9800;">
+      <span>Trạng thái</span>
+      <strong style="font-size: 14px;">
+        <% if (tournament.status === 'open') { %>
+          <span style="color: #4CAF50;">Đang mở đăng ký</span>
+        <% } else if (tournament.status === 'closed') { %>
+          <span style="color: #FF9800;">Đã khóa</span>
+        <% } else { %>
+          <span style="color: #999;">Draft</span>
+        <% } %>
+      </strong>
+    </div>
+    <div class="card stat-card" style="border-left: 5px solid #7C3AED;">
+      <span>Số vòng</span>
+      <strong><%= bracketData ? bracketData.totalRounds : '-' %></strong>
+    </div>
+  </div>
+</section>
+
+<% if (isTournamentFull && bracketHTML) { %>
+  <section class="container panel">
+    <div class="bracket-wrapper" style="overflow-x: auto; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+      <%- bracketHTML %>
+    </div>
+  </section>
+<% } else { %>
+  <section class="container panel">
+    <div style="text-align: center; padding: 40px 20px; background: #f9f9f9; border-radius: 8px;">
+      <p style="color: #999; font-size: 18px;">
+        <% if (approvedTeams === 0) { %>
+          Chưa có đội nào đăng ký cho giải đấu này.
+        <% } else { %>
+          Giải đấu chưa đủ số đội tối thiểu để tạo sơ đồ trận đấu.
+        <% } %>
+      </p>
+      <p style="color: #999; margin-top: 10px;">
+        <% if (approvedTeams === 0) { %>
+          Vui lòng quay lại sau khi có đội đăng ký.
+        <% } else { %>
+          Cần <%= tournament.maxTeams - approvedTeams %> đội nữa.
+        <% } %>
+      </p>
+    </div>
+  </section>
+<% } %>
+
+<section class="container panel">
+  <h2>Danh sách các đội tham gia (<%= approvedTeams %> đội)</h2>
+  
+  <% if (teams && teams.length > 0) { %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên đội</th>
+            <th>Đội trưởng</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Khu vực</th>
+            <th>Ngày đăng ký</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% teams.forEach((team, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><strong><%= team.name %></strong></td>
+              <td><%= team.captainName %></td>
+              <td><%= team.captainEmail %></td>
+              <td><%= team.phone %></td>
+              <td><%= team.area %></td>
+              <td><%= formatDate(team.registeredAt) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p style="text-align: center; padding: 20px; color: #999;">Chưa có đội nào tham gia giải đấu này.</p>
+  <% } %>
+</section>
+
+<%- include('partials-footer') %>

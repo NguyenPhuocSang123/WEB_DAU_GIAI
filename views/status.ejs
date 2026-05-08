@@ -26,6 +26,7 @@
         <div>
           <h2><%= team.name %></h2>
           <p>Doi truong: <%= team.captainName %> - <%= team.captainEmail %></p>
+          <p style="color: #666; margin-top: 5px;"><strong>Giai dau:</strong> <span style="color: #4CAF50; font-weight: bold;"><%= team.tournamentId?.name || 'N/A' %></span></p>
         </div>
         <span class="status-badge <%= team.status %>"><%= team.status %></span>
       </div>

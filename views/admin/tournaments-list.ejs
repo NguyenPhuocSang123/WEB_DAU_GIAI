@@ -1,0 +1,93 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1>Quản lý giải đấu</h1>
+    <p>Xem, chỉnh sửa, hoặc xoá các giải đấu.</p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a class="btn btn-primary" href="/admin/tournament/create">Tạo giải đấu</a>
+    <a class="btn btn-secondary" href="/admin/dashboard">Quay lại</a>
+  </div>
+</section>
+
+<% if (tournaments && tournaments.length > 0) { %>
+  <section class="container">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tên giải đấu</th>
+            <th>Trạng thái</th>
+            <th>Đội đã đăng ký</th>
+            <th>Đội đã duyệt</th>
+            <th>Mở đăng ký</th>
+            <th>Đóng đăng ký</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% tournaments.forEach(tournament => {
+            const now = new Date();
+            const isOpen = tournament.status === 'open' && now >= new Date(tournament.registrationOpenAt) && now <= new Date(tournament.registrationCloseAt);
+            let statusBadge = '';
+            let statusColor = '';
+            
+            if (tournament.status === 'draft') {
+              statusBadge = 'Draft';
+              statusColor = '#999';
+            } else if (tournament.status === 'closed') {
+              statusBadge = 'Đóng';
+              statusColor = '#FF9800';
+            } else if (isOpen) {
+              statusBadge = 'Mở';
+              statusColor = '#4CAF50';
+            } else {
+              statusBadge = 'Hết hạn';
+              statusColor = '#FF5252';
+            }
+          %>
+            <tr>
+              <td><strong><%= tournament.name %></strong></td>
+              <td>
+                <span style="display: inline-block; padding: 4px 8px; border-radius: 3px; background-color: <%= statusColor %>; color: white; font-size: 12px; font-weight: bold;">
+                  <%= statusBadge %>
+                </span>
+              </td>
+              <td><%= tournament.totalTeams %></td>
+              <td><%= tournament.approvedTeams %></td>
+              <td><%= formatDate(tournament.registrationOpenAt) %></td>
+              <td><%= formatDate(tournament.registrationCloseAt) %></td>
+              <td>
+                <div style="display: flex; gap: 8px;">
+                  <a href="/admin/tournaments/<%= tournament._id %>/edit" class="btn btn-sm" style="padding: 6px 12px; font-size: 12px; background: #2196F3; color: white; text-decoration: none; border-radius: 3px; cursor: pointer;">
+                    Sửa
+                  </a>
+                  <form method="POST" action="/admin/tournaments/<%= tournament._id %>/delete" style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xoá giải đấu này? <% if (tournament.totalTeams > 0) { %>CẢNH BÁO: Giải đấu này có <%= tournament.totalTeams %> đội đã đăng ký, không thể xoá!<% } %>');">
+                    <% if (tournament.totalTeams > 0) { %>
+                      <button type="button" class="btn btn-sm" style="padding: 6px 12px; font-size: 12px; background: #ccc; color: #666; border: none; border-radius: 3px; cursor: not-allowed;" title="Không thể xoá khi có đội đã đăng ký">
+                        Xoá
+                      </button>
+                    <% } else { %>
+                      <button type="submit" class="btn btn-sm" style="padding: 6px 12px; font-size: 12px; background: #FF5252; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                        Xoá
+                      </button>
+                    <% } %>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% } else { %>
+  <section class="container">
+    <div class="card" style="text-align: center; padding: 40px;">
+      <p>Chưa có giải đấu nào. <a href="/admin/tournament/create" style="color: #2196F3; text-decoration: none;">Tạo giải đấu mới</a></p>
+    </div>
+  </section>
+<% } %>
+
+<%- include('../partials-footer') %>

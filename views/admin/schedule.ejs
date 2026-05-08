@@ -1,0 +1,117 @@
+<%- include('../partials') %>
+
+<section class="container page-head admin-head">
+  <div>
+    <h1>Lịch thi đấu</h1>
+    <p>
+      <% if (tournament) { %>
+        Giải: <strong><%= tournament.name %></strong> - Trạng thái: <strong><%= tournament.status %></strong>
+      <% } else { %>
+        Chưa có giải đấu nào được khởi tạo.
+      <% } %>
+    </p>
+    <p>
+      Đã duyệt: <strong><%= approvedTeams %></strong> / Tổng: <strong><%= totalTeams %></strong>
+    </p>
+  </div>
+
+  <a class="btn btn-secondary" href="/admin/dashboard">Quay lại dashboard</a>
+</section>
+
+<section class="container panel">
+  <h2>Tạo lịch đấu</h2>
+
+  <% if (approvedTeams < 2) { %>
+    <p>Chưa đủ đội đã duyệt để tạo lịch đấu. Hãy quay lại dashboard để duyệt đội.</p>
+  <% } else { %>
+    <form method="POST" action="/admin/schedule/generate" class="stack-md">
+      <% if (tournament) { %>
+        <input type="hidden" name="tournamentId" value="<%= tournament._id %>" />
+      <% } %>
+      <label>
+        <span>Seed/Phân cặp ban đầu</span>
+        <select name="seedingMethod">
+          <option value="registeredAtAsc" selected>Theo thứ tự đăng ký (sớm nhất)</option>
+          <option value="random">Ngẫu nhiên</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Bắt đầu lịch (tuỳ chọn)</span>
+        <input type="datetime-local" name="startAt" />
+      </label>
+
+      <label>
+        <span>Khoảng cách mỗi trận (phút)</span>
+        <input type="number" min="1" step="1" name="matchIntervalMinutes" value="5" />
+      </label>
+
+      <button class="btn btn-primary" type="submit">
+        <%= tournament?.status === 'closed' ? 'Chốt & tạo lại lịch' : 'Chốt danh sách & tạo lịch đấu' %>
+      </button>
+    </form>
+
+    <p>
+      Sau khi tạo lịch, bạn có thể sửa <strong>thứ tự</strong> và <strong>thời gian</strong> từng trận ngay bên dưới.
+    </p>
+  <% } %>
+</section>
+
+<section class="container panel">
+  <h2>Danh sách trận</h2>
+
+  <% if (!matches || matches.length === 0) { %>
+    <p>Chưa có lịch thi đấu. Hãy tạo lịch ở phía trên.</p>
+  <% } else { %>
+    <form method="POST" action="/admin/schedule/update">
+      <% if (tournament) { %>
+        <input type="hidden" name="tournamentId" value="<%= tournament._id %>" />
+      <% } %>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Vòng</th>
+              <th>Trận</th>
+              <th>Thứ tự</th>
+              <th>Thời gian</th>
+              <th>Đội A</th>
+              <th>Đội B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% matches.forEach((m) => { %>
+              <tr>
+                <td><%= m.round %></td>
+                <td><%= m.matchIndex %></td>
+                <td>
+                  <input
+                    type="number"
+                    name="matches[<%= m.id %>][order]"
+                    value="<%= m.order %>"
+                    min="1"
+                    step="1"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="datetime-local"
+                    name="matches[<%= m.id %>][startAt]"
+                    value="<%= m.startAtValue %>"
+                  />
+                </td>
+                <td><%= m.homeLabel %></td>
+                <td><%= m.awayLabel %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Lưu lịch</button>
+    </form>
+  <% } %>
+</section>
+
+<%- include('../partials-footer') %>
+
